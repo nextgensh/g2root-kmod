@@ -1,0 +1,11 @@
+Follow these instructions to gain temporary root accesss.
+1. Upload the psneuter binary onto your phone using adb
+   >> adb push psneuter /data/local/tmp/
+2. Run the binary
+   >> adb shell /data/local/tmp/psneuter
+3. Open another terminal and kill the adb process if you see the prompt has hung (most comon case)
+   >> adb kill-server
+4. Reopen the adb connection and you should have root access with PS1 as #
+   >> adb shell
+
+This is a reliable method as we don't wait for adb to restart manually.

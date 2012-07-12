@@ -10,6 +10,9 @@
 // service and things like dns broken.
 // thus, we will want to use this, see if we can fix the misc partition, and downgrade the firmware as a whole to something more root friendly.
 
+/* Shravan (shravan@kusraho.in)
+Add support for devices like lgp970 which restart immediately after the adb deamon is killed and drop back into the user mod. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -143,6 +146,25 @@ int main(int argc, char **argv, char **envp)
 	fprintf(stderr, "Failed to kill adbd (%s)\n", strerror(errno));
 	exit(1);
     }
+	else
+	{
+		/* For devices like lgp970 which dies immediately after the adb deamon is killed. */
+		adbdpid = fork();
+		if(adbdpid > 0)
+		{
+			/* This is the parent process. 
+			 * Kill it I don't need you. */
+			 exit(0);
+		}
+		else if(adbdpid == 0)
+		{
+			/* This is nice little child. Let is start running
+			 * the adb deamon again. */
+			char *arg[] = {"NULL"};
+			execv("/sbin/adbd", arg); 
+		}
+
+	}
     return 0;
 }
 
